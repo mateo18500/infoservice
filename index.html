@@ -66,28 +66,16 @@
     <h1>Notes Opérationnelles SAMU</h1>
   </header>
 
-  <!-- Image décorative -->
   <img src="https://cdn-icons-png.flaticon.com/512/2965/2965567.png" alt="logo samu" />
 
-  <!-- Page de connexion -->
   <section id="login">
-    <h2>Connexion administrateur</h2>
+    <h2>Connexion</h2>
     <input type="text" id="username" placeholder="Identifiant" /><br />
     <input type="password" id="password" placeholder="Mot de passe" /><br />
     <button onclick="login()">Se connecter</button>
   </section>
 
-  <!-- Choix du pôle -->
   <main>
-    <section id="choix-pole" class="hidden">
-      <h2>Choisissez votre pôle :</h2>
-      <button onclick="afficherInfos('infirmier')">Infirmier</button>
-      <button onclick="afficherInfos('medecin')">Médecin</button>
-      <button onclick="afficherInfos('ambulancier')">Ambulancier</button>
-      <button onclick="afficherInfos('arm')">ARM</button>
-    </section>
-
-    <!-- Informations -->
     <section id="infos" class="hidden">
       <h2>Informations Générales</h2>
       <p id="infos-generales">Chargement...</p>
@@ -95,7 +83,6 @@
       <h2>Informations Spécifiques</h2>
       <p id="infos-specifiques">Chargement...</p>
 
-      <!-- Ajout de PDF visible uniquement par l'admin -->
       <div class="pdf-upload hidden" id="admin-panel">
         <h3>Ajouter une note PDF :</h3>
         <input type="file" id="pdfUpload" accept="application/pdf" />
@@ -103,8 +90,7 @@
         <div id="pdfList"></div>
       </div>
 
-      <!-- Bouton retour -->
-      <button onclick="retourAccueil()">🔙 Retour</button>
+      <button onclick="retourAccueil()">🔙 Déconnexion</button>
     </section>
   </main>
 
@@ -113,41 +99,44 @@
   </footer>
 
   <script>
-    let adminConnecte = false;
+    const utilisateurs = {
+      admin: { motdepasse: "admin123", role: "admin" },
+      infirmier: { motdepasse: "if123", role: "infirmier" },
+      medecin: { motdepasse: "med123", role: "medecin" },
+      ambulancier: { motdepasse: "ambu123", role: "ambulancier" },
+      arm: { motdepasse: "arm123", role: "arm" }
+    };
+
+    let utilisateurConnecte = null;
 
     function login() {
-      const user = document.getElementById("username").value;
-      const pass = document.getElementById("password").value;
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
 
-      // Identifiant et mot de passe par défaut
-      if (user === "admin" && pass === "1234") {
-        adminConnecte = true;
+      if (utilisateurs[username] && utilisateurs[username].motdepasse === password) {
+        utilisateurConnecte = utilisateurs[username];
         document.getElementById("login").classList.add("hidden");
-        document.getElementById("choix-pole").classList.remove("hidden");
-        alert("Connexion réussie !");
+        document.getElementById("infos").classList.remove("hidden");
+
+        document.getElementById("infos-generales").innerText =
+          "Bienvenue " + username.toUpperCase() + " - Informations générales disponibles pour tous.";
+        document.getElementById("infos-specifiques").innerText =
+          "Informations spécifiques pour le pôle : " + utilisateurConnecte.role.toUpperCase();
+
+        if (utilisateurConnecte.role === "admin") {
+          document.getElementById("admin-panel").classList.remove("hidden");
+        }
       } else {
         alert("Identifiants incorrects !");
       }
     }
 
-    function afficherInfos(pole) {
-      document.getElementById("choix-pole").classList.add("hidden");
-      document.getElementById("infos").classList.remove("hidden");
-      document.getElementById("infos-generales").innerText =
-        "Informations générales disponibles pour tous.";
-      document.getElementById("infos-specifiques").innerText =
-        "Informations spécifiques pour le pôle " + pole + ".";
-
-      if (adminConnecte) {
-        document.getElementById("admin-panel").classList.remove("hidden");
-      } else {
-        document.getElementById("admin-panel").classList.add("hidden");
-      }
-    }
-
     function retourAccueil() {
+      utilisateurConnecte = null;
       document.getElementById("infos").classList.add("hidden");
-      document.getElementById("choix-pole").classList.remove("hidden");
+      document.getElementById("login").classList.remove("hidden");
+      document.getElementById("pdfList").innerHTML = "";
+      document.getElementById("pdfUpload").value = "";
     }
 
     function ajouterPDF() {

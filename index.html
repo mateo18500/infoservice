@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes Opérationnelles SAMU</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #004080;
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+        button:hover {
+            background: #0078d7;
+            color: white;
+        }
+        .hidden {
+            display: none;
+        }
+        #infos {
+            background: white;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        footer {
+            background: #004080;
+            color: white;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .pdf-upload {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Notes Opérationnelles SAMU</h1>
+    </header>
+    <main>
+        <section id="choix-pole">
+            <h2>Choisissez votre pôle :</h2>
+            <button onclick="afficherInfos('infirmier')">Infirmier</button>
+            <button onclick="afficherInfos('medecin')">Médecin</button>
+            <button onclick="afficherInfos('ambulancier')">Ambulancier</button>
+            <button onclick="afficherInfos('arm')">ARM</button>
+        </section>
+        <section id="infos" class="hidden">
+            <h2>Informations Générales</h2>
+            <p id="infos-generales">Chargement...</p>
+            <h2>Informations Spécifiques</h2>
+            <p id="infos-specifiques">Chargement...</p>
+            <div class="pdf-upload">
+                <h3>Ajouter une note PDF :</h3>
+                <input type="file" id="pdfUpload" accept="application/pdf">
+                <button onclick="ajouterPDF()">Ajouter</button>
+                <div id="pdfList"></div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 SAMU - Application interne</p>
+    </footer>
+
+    <script>
+        function afficherInfos(pole) {
+            document.getElementById("choix-pole").style.display = "none";
+            document.getElementById("infos").classList.remove("hidden");
+            document.getElementById("infos-generales").innerHTML = "Informations générales disponibles pour tous.";
+            document.getElementById("infos-specifiques").innerHTML = "Informations spécifiques pour le pôle " + pole + ".";
+        }
+
+        function ajouterPDF() {
+            const fileInput = document.getElementById("pdfUpload");
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const pdfList = document.getElementById("pdfList");
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(file);
+                link.textContent = file.name;
+                link.target = "_blank";
+                pdfList.appendChild(link);
+                pdfList.appendChild(document.createElement("br"));
+            }
+        }
+    </script>
+</body>
+</html>
